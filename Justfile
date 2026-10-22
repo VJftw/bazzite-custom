@@ -94,7 +94,7 @@ build $target_image=image_name $tag=default_tag:
 
     set -euox pipefail
 
-    # The variant is the last component of the image name, e.g. bazzite/godrics-hollow
+    # The variant is the last component of the image name, e.g. bootc/bazzite/godrics-hollow
     VARIANT="${target_image##*/}"
     if [[ ! -d "images/${VARIANT}" ]]; then
         echo "Unknown variant '${VARIANT}'. Available: $(ls images | tr '\n' ' ')" >&2

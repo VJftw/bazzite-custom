@@ -68,7 +68,7 @@ jobs:
       - name: Image Name
         id: image-name
         run: |
-          IMAGE_NAME="bazzite/${{ matrix.variant }}"
+          IMAGE_NAME="bootc/bazzite/${{ matrix.variant }}"
 
           echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
 

@@ -1,6 +1,6 @@
 # Repository layout
 
-This is a monorepo that builds multiple Bazzite variants from one `Containerfile`. Each variant is its own image, `ghcr.io/vjftw/bazzite/<variant>`, with the usual `latest` and dated tags.
+This is a monorepo that builds multiple Bazzite variants from one `Containerfile`. Each variant is its own image, `ghcr.io/vjftw/bootc/bazzite/<variant>`, with the usual `latest` and dated tags.
 
 | Path | Purpose |
 | --- | --- |
@@ -15,7 +15,7 @@ This is a monorepo that builds multiple Bazzite variants from one `Containerfile
 
 ASUS X470 Prime Pro desktop.
 
-- **Image:** `ghcr.io/vjftw/bazzite/godrics-hollow`
+- **Image:** `ghcr.io/vjftw/bootc/bazzite/godrics-hollow`
 - **Base:** `ghcr.io/ublue-os/bazzite:stable`
 - **Customisations:**
   - Fan control support
@@ -28,14 +28,14 @@ ASUS X470 Prime Pro desktop.
 
 GPD Win Max 2 (2025) handheld.
 
-- **Image:** `ghcr.io/vjftw/bazzite/dumbledore`
+- **Image:** `ghcr.io/vjftw/bootc/bazzite/dumbledore`
 - **Base:** `ghcr.io/ublue-os/bazzite-deck:stable`
 - **Customisations:**
   - None yet
 
 ## Building and switching
 
-Build one locally with `just build bazzite/godrics-hollow` (the variant is the last part of the image name; `just variants` lists them), then `sudo bootc switch ghcr.io/vjftw/bazzite/godrics-hollow:latest`.
+Build one locally with `just build bootc/bazzite/godrics-hollow` (the variant is the last part of the image name; `just variants` lists them), then `sudo bootc switch ghcr.io/vjftw/bootc/bazzite/godrics-hollow:latest`.
 
 ## Adding a variant
 
