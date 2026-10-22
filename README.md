@@ -9,12 +9,35 @@ This is a monorepo that builds multiple Bazzite variants from one `Containerfile
 | `images/<variant>/build.sh` | Package installs and customisations for that variant |
 | `images/<variant>/system_files/` | Files copied into that variant only (override shared files) |
 
-Variants:
+## Variants
 
-- `godrics-hollow`: ASUS X470 Prime Pro desktop. Installs CoolerControl, builds the out-of-tree `it87` driver (IT8665E fan control) and sets `acpi_enforce_resources=lax`.
-- `dumbledore`: GPD Win Max 2 (2025) handheld. Uses `bazzite-deck` as its base (set in `images/dumbledore/variant.env`); no extra packages yet.
+### godrics-hollow
+
+ASUS X470 Prime Pro desktop.
+
+- **Image:** `ghcr.io/vjftw/bazzite/godrics-hollow`
+- **Base:** `ghcr.io/ublue-os/bazzite:stable`
+- **Customisations:**
+  - Fan control support
+    - CoolerControl (`coolercontrol`, `coolercontrold`)
+    - `lm_sensors` and `liquidctl`
+    - Out-of-tree `it87` driver for the IT8665E Super I/O fan controller
+    - `acpi_enforce_resources=lax` kernel argument
+
+### dumbledore
+
+GPD Win Max 2 (2025) handheld.
+
+- **Image:** `ghcr.io/vjftw/bazzite/dumbledore`
+- **Base:** `ghcr.io/ublue-os/bazzite-deck:stable`
+- **Customisations:**
+  - None yet
+
+## Building and switching
 
 Build one locally with `just build bazzite/godrics-hollow` (the variant is the last part of the image name; `just variants` lists them), then `sudo bootc switch ghcr.io/vjftw/bazzite/godrics-hollow:latest`.
+
+## Adding a variant
 
 To add a variant, create `images/<name>/variant.env` (`BASE_IMAGE=...`), `images/<name>/build.sh` (and optionally `system_files/`). `build.yml` discovers variants automatically.
 
