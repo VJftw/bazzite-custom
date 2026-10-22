@@ -11,11 +11,11 @@ This is a monorepo that builds multiple Bazzite variants from one `Containerfile
 
 ## Variants
 
-### godrics-hollow
+### asus-x470-prime-pro
 
 ASUS X470 Prime Pro desktop.
 
-- **Image:** `ghcr.io/vjftw/bootc/bazzite/godrics-hollow`
+- **Image:** `ghcr.io/vjftw/bootc/bazzite/asus-x470-prime-pro`
 - **Base:** `ghcr.io/ublue-os/bazzite:stable`
 - **Customisations:**
   - Fan control support
@@ -24,18 +24,18 @@ ASUS X470 Prime Pro desktop.
     - Out-of-tree `it87` driver for the IT8665E Super I/O fan controller
     - `acpi_enforce_resources=lax` kernel argument
 
-### dumbledore
+### gpd-winmax2-2025
 
 GPD Win Max 2 (2025) handheld.
 
-- **Image:** `ghcr.io/vjftw/bootc/bazzite/dumbledore`
+- **Image:** `ghcr.io/vjftw/bootc/bazzite/gpd-winmax2-2025`
 - **Base:** `ghcr.io/ublue-os/bazzite-deck:stable`
 - **Customisations:**
   - None yet
 
 ## Building and switching
 
-Build one locally with `just build bootc/bazzite/godrics-hollow` (the variant is the last part of the image name; `just variants` lists them), then `sudo bootc switch ghcr.io/vjftw/bootc/bazzite/godrics-hollow:latest`.
+Build one locally with `just build bootc/bazzite/asus-x470-prime-pro` (the variant is the last part of the image name; `just variants` lists them), then `sudo bootc switch ghcr.io/vjftw/bootc/bazzite/asus-x470-prime-pro:latest`.
 
 ## Adding a variant
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# godrics-hollow: ASUS X470 Prime Pro desktop
+# asus-x470-prime-pro: ASUS X470 Prime Pro desktop
 
 set -ouex pipefail
 
