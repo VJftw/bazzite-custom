@@ -1,10 +1,16 @@
 # Allow build scripts to be referenced without being copied into the final image
+# VARIANT selects which directory under images/ is applied on top of the shared files
+ARG VARIANT
+# Each variant picks its base image in images/<variant>/variant.env
+ARG BASE_IMAGE=ghcr.io/ublue-os/bazzite:stable
 FROM scratch AS ctx
+ARG VARIANT
 COPY build_files /
-COPY system_files /system_files
+COPY system_files /common/system_files
+COPY images/${VARIANT} /variant
 
 # Base Image
-FROM ghcr.io/ublue-os/bazzite:stable
+FROM ${BASE_IMAGE}
 ## Other possible base images include:
 # FROM ghcr.io/ublue-os/bazzite:testing
 # FROM ghcr.io/ublue-os/aurora:stable

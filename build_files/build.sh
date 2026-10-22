@@ -3,7 +3,9 @@
 set -ouex pipefail
 
 # Copy the contents of system_files/ of the git repo to /
-cp -avf "/ctx/system_files"/. /
+# Shared files first, then the variant's files (so a variant can override)
+cp -avf "/ctx/common/system_files"/. /
+cp -avf "/ctx/variant/system_files"/. /
 
 ### Install packages
 
@@ -25,3 +27,7 @@ dnf5 install -y tmux
 #### Example for enabling a System Unit File
 
 systemctl enable podman.socket
+
+### Variant-specific customisations
+
+bash -ouex pipefail /ctx/variant/build.sh

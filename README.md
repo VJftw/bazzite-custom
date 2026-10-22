@@ -1,3 +1,25 @@
+# Repository layout
+
+This is a monorepo that builds multiple Bazzite variants from one `Containerfile`. Each variant is its own image, `ghcr.io/vjftw/bazzite/<variant>`, with the usual `latest` and dated tags.
+
+| Path | Purpose |
+| --- | --- |
+| `build_files/build.sh` | Shared build entrypoint: copies shared and variant `system_files`, then runs the variant's `build.sh` |
+| `system_files/` | Files shared by every variant |
+| `images/<variant>/build.sh` | Package installs and customisations for that variant |
+| `images/<variant>/system_files/` | Files copied into that variant only (override shared files) |
+
+Variants:
+
+- `godrics-hollow`: ASUS X470 Prime Pro desktop. Installs CoolerControl, builds the out-of-tree `it87` driver (IT8665E fan control) and sets `acpi_enforce_resources=lax`.
+- `dumbledore`: GPD Win Max 2 (2025) handheld. Uses `bazzite-deck` as its base (set in `images/dumbledore/variant.env`); no extra packages yet.
+
+Build one locally with `just build bazzite/godrics-hollow` (the variant is the last part of the image name; `just variants` lists them), then `sudo bootc switch ghcr.io/vjftw/bazzite/godrics-hollow:latest`.
+
+To add a variant, create `images/<name>/variant.env` (`BASE_IMAGE=...`), `images/<name>/build.sh` (and optionally `system_files/`). `build.yml` discovers variants automatically.
+
+---
+
 # image-template
 
 This repository is meant to be a template for building your own custom [bootc](https://github.com/bootc-dev/bootc) image. This template is the recommended way to make customizations to any image published by the Universal Blue Project.
@@ -134,28 +156,6 @@ The [build.sh](./build_files/build.sh) file is called from your Containerfile. I
 
 The [build.yml](./.github/workflows/build.yml) Github Actions workflow creates your custom OCI image and publishes it to the Github Container Registry (GHCR). By default, the image name will match the Github repository name.
 
-# Building Disk Images
-
-This template provides an out of the box workflow for creating disk images (ISO, qcow, raw) for your custom OCI image which can be used to directly install onto your machines.
-
-This template provides a way to upload the disk images that is generated from the workflow to a S3 bucket. The disk images will also be available as an artifact from the job, if you wish to use an alternate provider. To upload to S3 we use [rclone](https://rclone.org/) which is able to use [many S3 providers](https://rclone.org/s3/).
-
-## Setting Up ISO Builds
-
-The [build-disk.yml](./.github/workflows/build-disk.yml) Github Actions workflow creates a disk image from your OCI image by utilizing the [bootc-image-builder](https://osbuild.org/docs/bootc/). In order to use this workflow you must complete the following steps:
-
-1. Modify `disk_config/iso.toml` to point to your custom container image before generating an ISO image.
-2. If you changed your image name from the default in `build.yml` then in the `build-disk.yml` file edit the `IMAGE_REGISTRY`, `IMAGE_NAME` and `DEFAULT_TAG` environment variables with the correct values. If you did not make changes, skip this step.
-3. Finally, if you want to upload your disk images to S3 then you will need to add your S3 configuration to the repository's Action secrets. This can be found by going to your repository settings, under `Secrets and Variables` -> `Actions`. You will need to add the following
-  - `S3_PROVIDER` - Must match one of the values from the [supported list](https://rclone.org/s3/)
-  - `S3_BUCKET_NAME` - Your unique bucket name
-  - `S3_ACCESS_KEY_ID` - It is recommended that you make a separate key just for this workflow
-  - `S3_SECRET_ACCESS_KEY` - See above.
-  - `S3_REGION` - The region your bucket lives in. If you do not know then set this value to `auto`.
-  - `S3_ENDPOINT` - This value will be specific to the bucket as well.
-
-Once the workflow is done, you'll find the disk images either in your S3 bucket or as part of the summary under `Artifacts` after the workflow is completed.
-
 # Artifacthub
 
 This template comes with the necessary tooling to index your image on [artifacthub.io](https://artifacthub.io). Use the `artifacthub-repo.yml` file at the root to verify yourself as the publisher. This is important to you for a few reasons:
@@ -189,7 +189,6 @@ These are all sourced from the `image-template.env` file.
 
 - `image_name`: The name of the image (default: "image-template").
 - `default_tag`: The default tag for the image (default: "latest").
-- `bib_image`: The Bootc Image Builder (BIB) image (default: "quay.io/centos-bootc/bootc-image-builder:latest").
 
 ## Building The Image
 
@@ -227,7 +226,7 @@ just rechunk $target_image $tag
 
 ### Switching to the locally built image for testing
 
-The image has to be in the containers-storage owned by root, to be able to rebase to it, see the `_rootful_load_image` recipe.
+The image has to be in the containers-storage owned by root to be able to rebase to it, e.g. `podman save <image> | sudo podman load`.
 
 `sudo just build` and `sudo just ostree-rechunk` builds directly as root and allows you to skip the transfer to the root containers-storage.
 
@@ -244,42 +243,6 @@ sudo bootc switch --transport containers-storage localhost/myimage:latest
 ```
 
 and reboot your system!
-
-## Building and Running Virtual Machines and ISOs
-
-The below commands all build QCOW2 images. To produce or use a different type of image, substitute in the command with that type in the place of `qcow2`. The available types are `qcow2`, `iso`, and `raw`.
-
-### `just build-qcow2`
-
-Builds a QCOW2 virtual machine image.
-
-```bash
-just build-qcow2 $target_image $tag
-```
-
-### `just rebuild-qcow2`
-
-Rebuilds a QCOW2 virtual machine image.
-
-```bash
-just rebuild-vm $target_image $tag
-```
-
-### `just run-vm-qcow2`
-
-Runs a virtual machine from a QCOW2 image.
-
-```bash
-just run-vm-qcow2 $target_image $tag
-```
-
-### `just spawn-vm`
-
-Runs a virtual machine using systemd-vmspawn.
-
-```bash
-just spawn-vm rebuild="0" type="qcow2" ram="6G"
-```
 
 ## File Management
 
